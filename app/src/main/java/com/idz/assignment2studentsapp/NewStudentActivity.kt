@@ -19,6 +19,8 @@ class NewStudentActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_new_student)
+
+        // Adjust padding for system bars
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
@@ -35,35 +37,29 @@ class NewStudentActivity : AppCompatActivity() {
         val savedTextField: TextView = findViewById(R.id.add_student_success_saved_text_view)
         val isCheckedTextView: TextView = findViewById(R.id.textView5)
 
+        // Show or hide text based on checkbox state
         checkBox.setOnCheckedChangeListener { _, isChecked ->
-            if (isChecked) {
-                isCheckedTextView.visibility = View.VISIBLE
-            } else {
-                isCheckedTextView.visibility = View.INVISIBLE
-            }
+            isCheckedTextView.visibility = if (isChecked) View.VISIBLE else View.INVISIBLE
+        }
 
+        // Save new student
         saveButton.setOnClickListener {
-//            savedTextField.text = "${nameTextField.text} ${idTextField.text}  ${phoneTextField.text} ${addressTextField.text}  ${checkBox.isChecked} is saved...!!!"
             val name = nameTextField.text.toString()
             val id = idTextField.text.toString()
             val phone = phoneTextField.text.toString()
             val address = addressTextField.text.toString()
             val isChecked = checkBox.isChecked
 
+            val newStudent = Student(name, id, phone, address, isChecked)
+            Model.shared.addStudent(newStudent)
 
+            savedTextField.text = "$name is saved...!!!"
+        }
 
-                val newStudent = Student(name, id, phone, address, isChecked)
-
-                Model.shared.addStudent(newStudent)
-
-                savedTextField.text = "$name is saved...!!!"
-            }
-
-            cancelButton.setOnClickListener {
-                //finish()
-                val intent = Intent(this, StudentListActivity::class.java)
-                startActivity(intent)
-            }
+        // Cancel and navigate back to Student List
+        cancelButton.setOnClickListener {
+            val intent = Intent(this, StudentListActivity::class.java)
+            startActivity(intent)
         }
     }
 }
